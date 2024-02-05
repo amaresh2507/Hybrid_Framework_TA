@@ -12,7 +12,7 @@ from utils.data_utils import DataSource
 class TestLogin(WebDriverWrapper):
     @pytest.mark.parametrize(
         "username, password, expect_title",
-        DataSource.data_varialbles
+        DataSource.data_valid
     )
     def test_valid_login(self, username, password, expect_title):
         self.driver.find_element(By.ID, "authUser").send_keys(username)
@@ -20,12 +20,16 @@ class TestLogin(WebDriverWrapper):
         self.driver.find_element(By.ID, "login-button").click()
         assert_that(expect_title).is_equal_to(self.driver.title)
 
-    def test_invalid_login(self):
-        self.driver.find_element(By.ID, "authUser").send_keys("admin")
-        self.driver.find_element(By.CSS_SELECTOR, "#clearPass").send_keys("john")
+    @pytest.mark.parametrize(
+        "username, password, error_msg",
+        DataSource.data_invalid
+    )
+    def test_invalid_login(self, username, password, error_msg):
+        self.driver.find_element(By.ID, "authUser").send_keys(username)
+        self.driver.find_element(By.CSS_SELECTOR, "#clearPass").send_keys(password)
         self.driver.find_element(By.ID, "login-button").click()
         err_msg = self.driver.find_element(By.XPATH, "//p[contains(text(), 'Invalid')]").text
-        assert_that(err_msg).contains("Invalid")
+        assert_that(err_msg).contains(error_msg)
 
     def test_Title(self):
         title_page = self.driver.title

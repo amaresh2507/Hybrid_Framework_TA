@@ -1,2 +1,3 @@
 class DataSource:
-    data_varialbles = [('admin', 'pass', 'OpenEMR'), ('accountant', 'accountant', 'OpenEMR')]
+    data_valid = [('admin', 'pass', 'OpenEMR'), ('accountant', 'accountant', 'OpenEMR')]
+    data_invalid = [('saul', 'saul123', 'Invalid'), ('john', 'john123', 'Invalid')]
