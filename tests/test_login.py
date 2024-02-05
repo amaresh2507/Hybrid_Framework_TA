@@ -1,12 +1,11 @@
 import time
 
 import pytest
-import pytest_html
-from selenium import webdriver
 from assertpy import assert_that
 from selenium.webdriver.common.by import By
 from base.automation_wrapper import WebDriverWrapper
 from utils.data_utils import DataSource
+from pages.login_page import LoginPage
 
 
 class TestLogin(WebDriverWrapper):
@@ -15,9 +14,10 @@ class TestLogin(WebDriverWrapper):
         DataSource.data_valid
     )
     def test_valid_login(self, username, password, expect_title):
-        self.driver.find_element(By.ID, "authUser").send_keys(username)
-        self.driver.find_element(By.CSS_SELECTOR, "#clearPass").send_keys(password)
-        self.driver.find_element(By.ID, "login-button").click()
+        login = LoginPage(self.driver)
+        login.login_username(username)
+        login.login_password(password)
+        login.login_button()
         assert_that(expect_title).is_equal_to(self.driver.title)
 
     @pytest.mark.parametrize(
@@ -25,10 +25,11 @@ class TestLogin(WebDriverWrapper):
         DataSource.data_invalid
     )
     def test_invalid_login(self, username, password, error_msg):
-        self.driver.find_element(By.ID, "authUser").send_keys(username)
-        self.driver.find_element(By.CSS_SELECTOR, "#clearPass").send_keys(password)
-        self.driver.find_element(By.ID, "login-button").click()
-        err_msg = self.driver.find_element(By.XPATH, "//p[contains(text(), 'Invalid')]").text
+        login = LoginPage(self.driver)
+        login.login_username(username)
+        login.login_password(password)
+        login.login_button()
+        err_msg = login.error_message()
         assert_that(err_msg).contains(error_msg)
 
     def test_Title(self):
