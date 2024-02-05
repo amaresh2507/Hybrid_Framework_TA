@@ -1,28 +1,44 @@
 import time
 
+import pytest
 from selenium import webdriver
 from assertpy import assert_that
 from selenium.webdriver.common.by import By
 
 
-class TestLogin:
+class WebDriverWrapper():
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self):
+        self.driver = webdriver.Chrome()
+        self.driver.maximize_window()
+        self.driver.implicitly_wait(5)
+        self.driver.get("http://demo.openemr.io/b/openemr/")
+
+        yield
+        time.sleep(5)
+        self.driver.quit()
+
+
+class TestLogin(WebDriverWrapper):
+
     def test_Title(self):
-        driver = webdriver.Chrome()
-        driver.maximize_window()
-        driver.implicitly_wait(5)
-        driver.get("http://demo.openemr.io/b/openemr/")
-        title_page = driver.title
+        title_page = self.driver.title
         # assert title_page == "OpenEMR Login"
         assert_that(title_page).is_equal_to("OpenEMR Logins")
         print(title_page)
-        time.sleep(5)
 
     def test_Desc(self):
-        driver = webdriver.Chrome()
-        driver.maximize_window()
-        driver.implicitly_wait(5)
-        driver.get("http://demo.openemr.io/b/openemr/")
-        text = driver.find_element(By.XPATH, "//p[@class='text-center lead']").text
+        text = self.driver.find_element(By.XPATH, "//p[@class='text-center lead']").text
         assert_that(text).contains("Electronic Health Record and Medical Practice Management")
-        time.sleep(5)
-        driver.quit()
+
+    def test_Placeholder_Usr(self):
+        placeholder_usr = self.driver.find_element(By.XPATH, "//input[@placeholder='Username']").get_attribute('placeholder')
+        print(placeholder_usr)
+        assert_that(placeholder_usr).is_equal_to('Username')
+
+    def test_Placeholder_Pwd(self):
+        placeholder_pwd = self.driver.find_element(By.XPATH, "//input[@placeholder='Password']").get_attribute('placeholder')
+        print(placeholder_pwd)
+        assert_that(placeholder_pwd).is_equal_to('Passwords')
+
+# master branch pushed
