@@ -1,30 +1,33 @@
 import time
 
 import pytest
+import pytest_html
 from selenium import webdriver
 from assertpy import assert_that
 from selenium.webdriver.common.by import By
+from base.automation_wrapper import WebDriverWrapper
 
-
-class WebDriverWrapper():
-    @pytest.fixture(scope="function", autouse=True)
-    def setup(self):
-        self.driver = webdriver.Chrome()
-        self.driver.maximize_window()
-        self.driver.implicitly_wait(5)
-        self.driver.get("http://demo.openemr.io/b/openemr/")
-
-        yield
-        time.sleep(5)
-        self.driver.quit()
 
 
 class TestLogin(WebDriverWrapper):
 
+    def test_valid_login(self,username, password, expect_title):
+        self.driver.find_element(By.ID, "authUser").send_keys(username)
+        self.driver.find_element(By.CSS_SELECTOR, "#clearPass").send_keys(password)
+        self.driver.find_element(By.ID, "login-button").click()
+        assert_that(expect_title).is_equal_to(self.driver.title)
+
+    def test_invalid_login(self):
+        self.driver.find_element(By.ID, "authUser").send_keys("admin")
+        self.driver.find_element(By.CSS_SELECTOR, "#clearPass").send_keys("john")
+        self.driver.find_element(By.ID, "login-button").click()
+        err_msg = self.driver.find_element(By.XPATH, "//p[contains(text(), 'Invalid')]").text
+        assert_that(err_msg).contains("Invalid")
+
     def test_Title(self):
         title_page = self.driver.title
         # assert title_page == "OpenEMR Login"
-        assert_that(title_page).is_equal_to("OpenEMR Logins")
+        assert_that(title_page).is_equal_to("OpenEMR Login")
         print(title_page)
 
     def test_Desc(self):
