@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from base.automation_wrapper import WebDriverWrapper
 from utils.data_utils import DataSource
 from pages.login_page import LoginPage
+from pages.main_page import MainPage
 
 
 class TestLogin(WebDriverWrapper):
@@ -33,10 +34,9 @@ class TestLogin(WebDriverWrapper):
         assert_that(err_msg).contains(error_msg)
 
     def test_Title(self):
-        title_page = self.driver.title
-        # assert title_page == "OpenEMR Login"
+        main_pg = MainPage(self.driver)
+        title_page = main_pg.get_main_title
         assert_that(title_page).is_equal_to("OpenEMR Login")
-        print(title_page)
 
     def test_Desc(self):
         text = self.driver.find_element(By.XPATH, "//p[@class='text-center lead']").text
