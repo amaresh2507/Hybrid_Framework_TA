@@ -3,6 +3,7 @@ from typing import Tuple
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+"""This module contains all the webdriver keywords"""
 
 class WebDriverKeywords:
     def __init__(self, driver):

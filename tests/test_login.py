@@ -11,7 +11,7 @@ from utils.data_utils import DataSource
 
 class TestLogin(WebDriverWrapper):
 
-    @pytest.mark.parametrize("username,password,expected_title", DataSource.data_valid_login)
+    @pytest.mark.parametrize("username,password,expected_title", DataSource.data_valid_login_csv)
     def test_valid_login(self, username, password, expected_title):
         login = LoginPage(self.driver)
         login.enter_username(username)
@@ -20,7 +20,7 @@ class TestLogin(WebDriverWrapper):
         main = MainPage(self.driver)
         assert_that(expected_title).is_equal_to(main.get_main_title)
 
-    @pytest.mark.parametrize("username,password,expected_error", DataSource.data_invalid_login)
+    @pytest.mark.parametrize("username,password,expected_error", DataSource.data_invalid_login_excel)
     def test_invalid_login(self, username, password, expected_error):
         login = LoginPage(self.driver)
         login.enter_username(username)
